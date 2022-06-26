@@ -14,7 +14,8 @@ const io = new Server(server,{
   }
 });
 
-const {userRoutes} = require("./routes");
+const {userRoutes,chatRoutes } = require("./routes");
+const { chatController } = require('./controllers')
 
 app.use(cors())
 app.use(bodyParser.json());
@@ -25,13 +26,15 @@ app.get('/', (req, res) => {
 })
 
 app.use('/api/user',userRoutes)
+app.use('/api/chat',chatRoutes)
 
 io.on('connection',(socket)=>{
   console.log("New Client Connected!"+socket.id);
 
   socket.emit('connection',null);
   socket.on('chat message',(msg)=>{
-    console.log('Message ', msg)
+    let send = chatController.sendMessage(msg)
+    console.log(send)
     io.emit('chat message',msg)
   })
 })
