@@ -15,6 +15,7 @@ module.exports = {
         connection.query(queryCheckRoom,(err,rows)=>{
             if(err) throw err;
 
+            let roomId = `${from}_${to}`;
             if(rows.length == 0){
                 let query = `INSERT INTO tb_chat_room (users) VALUES ('${from}_${to}')`;
                 connection.query(query,(err,rows)=>{
@@ -26,11 +27,13 @@ module.exports = {
                             "data" : err
                         }
                     }
-                    console.log("ROWS",rows)
+                    console.log("ROWS",rows);
+                    
                 })
+            }else{
+                console.log(rows[0])
+                roomId = rows[0].users;
             }
-            console.log(rows[0])
-            let roomId = rows[0].users;
             let queryInsertMessage = `INSERT INTO tb_messages (id_room,user,text) VALUES ('${roomId}','${from}','${text}')`
             connection.query(queryInsertMessage,(err,rows)=>{
 
